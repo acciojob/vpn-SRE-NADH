@@ -6,43 +6,45 @@ import java.util.List;
 
 @Entity
 public class User {
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private int id;
 
-   private String username;
+    private String username;
 
     private String password;
 
-   private String originalIp;
+    private String originalIp;
 
     private String maskedIp;
 
-    private boolean connected;
+    private Boolean connected = false;
 
-    @ManyToMany
-    @JoinColumn
-    private List<ServiceProvider> serviceProviderList=new ArrayList<>();
-    @OneToOne
-    @JoinColumn
-    private Country country;
+    //user as parent in oneonone
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private Country originalCountry;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Connection>  connectionList = new ArrayList<>();
+    List<Connection> connectionList = new ArrayList<>();
+
+    //service provider as parent in manytomany
+    @ManyToMany
+    @JoinColumn
+    List<ServiceProvider> serviceProviderList = new ArrayList<>();
 
     public User() {
     }
 
-    public User(int id, String username, String password, String originalIp, String maskedIp, boolean connected, List<ServiceProvider> serviceProviderList, Country country, List<Connection> connectionList) {
+    public User(int id, String username, String password, String originalIp, String maskedIp, Boolean connected, Country country, List<Connection> connectionList, List<ServiceProvider> serviceProviderList) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.originalIp = originalIp;
         this.maskedIp = maskedIp;
         this.connected = connected;
-        this.serviceProviderList = serviceProviderList;
-        this.country = country;
+        this.originalCountry = country;
         this.connectionList = connectionList;
+        this.serviceProviderList = serviceProviderList;
     }
 
     public int getId() {
@@ -85,28 +87,20 @@ public class User {
         this.maskedIp = maskedIp;
     }
 
-    public boolean getConnected() {
+    public Boolean getConnected() {
         return connected;
     }
 
-    public void setConnected(boolean connected) {
+    public void setConnected(Boolean connected) {
         this.connected = connected;
     }
 
-    public List<ServiceProvider> getServiceProviderList() {
-        return serviceProviderList;
-    }
-
-    public void setServiceProviderList(List<ServiceProvider> serviceProviderList) {
-        this.serviceProviderList = serviceProviderList;
-    }
-
     public Country getOriginalCountry() {
-        return country;
+        return originalCountry;
     }
 
-    public void setOriginalCountry(Country country) {
-        this.country = country;
+    public void setOriginalCountry(Country originalCountry) {
+        this.originalCountry = originalCountry;
     }
 
     public List<Connection> getConnectionList() {
@@ -115,5 +109,13 @@ public class User {
 
     public void setConnectionList(List<Connection> connectionList) {
         this.connectionList = connectionList;
+    }
+
+    public List<ServiceProvider> getServiceProviderList() {
+        return serviceProviderList;
+    }
+
+    public void setServiceProviderList(List<ServiceProvider> serviceProviderList) {
+        this.serviceProviderList = serviceProviderList;
     }
 }
