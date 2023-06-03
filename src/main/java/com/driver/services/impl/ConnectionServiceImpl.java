@@ -23,10 +23,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User connect(int userId, String countryName) throws Exception{
     User user = userRepository2.findById(userId).get();
-    if(user.isConnected()){
+    if(user.getConnected()){
         throw new Exception("Already connected");
     }
-    if(user.getCountry().toString().equals(countryName.toUpperCase())){
+    if(user.getOriginalCountry().toString().equals(countryName.toUpperCase())){
         return user;
     }
 
@@ -54,6 +54,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
      Connection connection = new Connection();
      connection.setUser(user);
+     user.setConnected(true);
      connection.setServiceProvider(serviceProvidertmp);
      user.getConnectionList().add(connection);
      serviceProvidertmp.getConnectionList().add(connection);
@@ -65,7 +66,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public User disconnect(int userId) throws Exception {
     User user = userRepository2.findById(userId).get();
-    if(!user.isConnected()){
+    if(!user.getConnected()){
         throw new Exception("Already disconnected");
     }
     user.setConnected(false);
@@ -81,7 +82,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     public User communicate(int senderId, int receiverId) throws Exception {
      User sender = userRepository2.findById(senderId).get();
      User receiver = userRepository2.findById(receiverId).get();
-     if(!receiver.isConnected() && sender.getCountry().getCountryName().equals(receiver.getCountry().getCountryName())){
+     if(!receiver.getConnected() && sender.getOriginalCountry().getCountryName().equals(receiver.getOriginalCountry().getCountryName())){
          return sender;
      }
      Country recieverCountry=null;
@@ -93,7 +94,7 @@ public class ConnectionServiceImpl implements ConnectionService {
              recieverCountry=country;
          }
      }
-     if(recieverCountry.getCountryName().equals(sender.getCountry().getCountryName())){
+     if(recieverCountry.getCountryName().equals(sender.getOriginalCountry().getCountryName())){
          return sender;
      }
 
