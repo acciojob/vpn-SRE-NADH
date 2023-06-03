@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -32,8 +31,8 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = new Admin();
         admin.setUsername(username);
         admin.setPassword(password);
-        adminRepository1.save(admin);
-        return admin;
+        Admin savedAdmin = adminRepository1.save(admin);
+        return savedAdmin;
     }
 
     @Override
@@ -42,10 +41,8 @@ public class AdminServiceImpl implements AdminService {
         ServiceProvider serviceProvider = new ServiceProvider();
         serviceProvider.setName(providerName);
         serviceProvider.setAdmin(admin);
-        List<ServiceProvider> serviceProviderList = admin.getServiceProviders();
-        serviceProviderList.add(serviceProvider);
-        admin.setServiceProviders(serviceProviderList);
-        adminRepository1.save(admin);
+        admin.getServiceProviders().add(serviceProvider);
+        Admin savedAdmin = adminRepository1.save(admin);
         return admin;
     }
 
@@ -53,12 +50,13 @@ public class AdminServiceImpl implements AdminService {
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
         String countryName1 = countryName.toUpperCase();
         if (!countryName1.equals("IND") && !countryName1.equals("USA") && !countryName1.equals("CHI") && !countryName1.equals("JPN")) throw new Exception("Country not found");
-        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
-        Country country = new Country(CountryName.valueOf(countryName1),CountryName.valueOf(countryName1).toCode());
-        country.setServiceProvider(serviceProvider);
-        serviceProvider.getCountryList().add(country);
-        serviceProviderRepository1.save(serviceProvider);
-        return serviceProvider;
+       ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
+       Country country = new Country();
+       country.setCountryName(CountryName.valueOf(countryName.toUpperCase()));
+       country.setServiceProvider(serviceProvider);
+       country.setCode(country.getCountryName().toCode());
+       serviceProvider.getCountryList().add(country);
+       ServiceProvider savedServiceProvider = serviceProviderRepository1.save(serviceProvider);
+       return serviceProvider;
     }
-
 }
