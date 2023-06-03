@@ -84,19 +84,14 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
     @Override
     public User disconnect(int userId) throws Exception {
-    User user = userRepository2.findById(userId).get();
-    if(!user.getConnected()){
-        throw new Exception("Already disconnected");
-    }
-    user.setConnected(false);
-
-    Connection connection = user.getConnectionList().get(0);
-    ServiceProvider serviceProvider=connection.getServiceProvider();
-    serviceProvider.getConnectionList().remove(connection);
-    user.setMaskedIp(null);
-    serviceProviderRepository2.save(serviceProvider);
-    user.getConnectionList().remove(connection);
-    return user;
+        User user = userRepository2.findById(userId).get();
+        if(user.getConnected()==false){
+            throw new Exception("Already disconnected");
+        }
+        user.setMaskedIp(null);
+        user.setConnected(false);
+        userRepository2.save(user);
+        return user;
     }
     @Override
     public User communicate(int senderId, int receiverId) throws Exception {
