@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 public class Connection {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

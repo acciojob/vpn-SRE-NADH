@@ -17,17 +17,8 @@ public class Country {
     @JoinColumn
     private ServiceProvider serviceProvider;
 
-    @OneToOne
-    @JoinColumn
+    @OneToOne(mappedBy = "country",cascade = CascadeType.ALL)
     private User user;
-
-    public Country() {
-    }
-
-    public Country(CountryName countryName, String code) {
-        this.countryName = countryName;
-        this.code = code;
-    }
 
     public Country(int id, CountryName countryName, String code, ServiceProvider serviceProvider, User user) {
         this.id = id;
@@ -35,6 +26,9 @@ public class Country {
         this.code = code;
         this.serviceProvider = serviceProvider;
         this.user = user;
+    }
+
+    public Country() {
     }
 
     public int getId() {
