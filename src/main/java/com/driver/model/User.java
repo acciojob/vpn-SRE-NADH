@@ -20,11 +20,10 @@ public class User {
 
     private boolean connected;
 
-    @ManyToMany
-    @JoinColumn
+    @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private List<ServiceProvider> serviceProviderList=new ArrayList<>();
-    @OneToOne
-    @JoinColumn
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Country country;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
