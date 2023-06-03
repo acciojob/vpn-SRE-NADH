@@ -110,7 +110,7 @@ public class ConnectionServiceImpl implements ConnectionService {
      ServiceProvider serviceProvider = serviceProviderRepository2.findById(Integer.parseInt(arr[1])).get();
      List<Country> countryList = serviceProvider.getCountryList();
      for(Country country:countryList){
-         if(country.getCode().equals(arr[0])){
+         if(country.getCode().toString().equals(arr[0])){
              recieverCountry=country;
              break;
          }
