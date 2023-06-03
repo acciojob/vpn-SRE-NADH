@@ -27,7 +27,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     if(user.getConnected()){
         throw new Exception("Already connected");
     }
-    if(user.getOriginalCountry().getCountryName().toString().equals(countryName.toUpperCase())){
+    if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
         return user;
     }
 
@@ -36,18 +36,23 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     List<ServiceProvider> serviceProviders = user.getServiceProviderList();
-    serviceProviders.sort(Comparator.comparingInt(ServiceProvider::getId));
 
+    serviceProviders.sort(Comparator.comparingInt(ServiceProvider::getId));
   ServiceProvider serviceProvidertmp=null;
   Country countrytmp=null;
+  boolean flg=false;
     for(ServiceProvider serviceProvider:serviceProviders){
         List<Country> countries = serviceProvider.getCountryList();
         for(Country country:countries){
             if(country.getCountryName().toString().equals(countryName.toUpperCase())){
                 serviceProvidertmp=serviceProvider;
                 countrytmp = country;
+                flg=true;
                 break;
             }
+        }
+        if(flg==true){
+            break;
         }
     }
      if(serviceProvidertmp==null && countrytmp==null){
@@ -72,19 +77,14 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
     @Override
     public User disconnect(int userId) throws Exception {
-    User user = userRepository2.findById(userId).get();
-    if(!user.getConnected()){
-        throw new Exception("Already disconnected");
-    }
-    user.setConnected(false);
-
-    Connection connection = user.getConnectionList().get(0);
-    ServiceProvider serviceProvider=connection.getServiceProvider();
-    serviceProvider.getConnectionList().remove(connection);
-    user.setMaskedIp(null);
-    serviceProviderRepository2.save(serviceProvider);
-    user.getConnectionList().remove(connection);
-    return user;
+        User user = userRepository2.findById(userId).get();
+        if (!user.getConnected()){
+            throw new Exception("Already disconnected");
+        }
+        user.setMaskedIp(null);
+        user.setConnected(false);
+        userRepository2.save(user);
+        return user;
     }
     @Override
     public User communicate(int senderId, int receiverId) throws Exception {
