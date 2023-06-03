@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(String username, String password, String countryName) throws Exception{
         HashSet<String> hs = AdminServiceImpl.converToHs();
-        if(!hs.contains(countryName.toUpperCase())){
+        if((!hs.contains(countryName.toUpperCase()))){
             throw new Exception("Country not found");
         }
         Country country = new Country();
