@@ -24,8 +24,7 @@ public class ServiceProvider{
     List<Country> countryList = new ArrayList<>();
 
     //service provider as parent in manytomany
-    @ManyToMany
-    @JoinColumn
+    @ManyToMany(mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
     List<User> users = new ArrayList<>();
 
     public ServiceProvider() {
