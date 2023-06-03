@@ -12,10 +12,10 @@ public class Admin {
 
     private String username;
 
-   private String password;
+    private String password;
 
-   @OneToMany(mappedBy ="admin",cascade = CascadeType.ALL)
-   private List<ServiceProvider> serviceProviders= new ArrayList<>();
+    @OneToMany(mappedBy ="admin",cascade = CascadeType.ALL)
+    private List<ServiceProvider> serviceProviders= new ArrayList<>();
 
     public Admin() {
     }
