@@ -36,7 +36,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     List<ServiceProvider> serviceProviders = user.getServiceProviderList();
-    serviceProviders.sort(Comparator.comparingInt(ServiceProvider->ServiceProvider.getId()));
+    serviceProviders.sort(Comparator.comparingInt(ServiceProvider::getId));
+
   ServiceProvider serviceProvidertmp=null;
   Country countrytmp=null;
     for(ServiceProvider serviceProvider:serviceProviders){
@@ -60,8 +61,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 
      connection.setServiceProvider(serviceProvidertmp);
      user.getConnectionList().add(connection);
+
      serviceProvidertmp.getConnectionList().add(connection);
+
      String tmp = countrytmp.getCode()+"."+serviceProvidertmp.getId()+"."+user.getId();
+    // System.out.println(tmp);
      user.setMaskedIp(tmp);
      User savedUser = userRepository2.save(user);
      return user;
@@ -99,44 +103,16 @@ public class ConnectionServiceImpl implements ConnectionService {
              break;
          }
      }
+
      if(recieverCountry.getCountryName().equals(sender.getOriginalCountry().getCountryName())){
          return sender;
      }
-
-        if(sender.getServiceProviderList().isEmpty()){
-            throw new Exception("Cannot establish communication");
-        }
-
-
-
-        List<ServiceProvider> serviceProviders = sender.getServiceProviderList();
-
-        serviceProviders.sort(Comparator.comparingInt(ServiceProvider->ServiceProvider.getId()));
-
-        ServiceProvider serviceProvidertmp=null;
-        for(ServiceProvider senderProvider:serviceProviders){
-            List<Country> countries = senderProvider.getCountryList();
-            for(Country country:countries){
-                if(country.getCountryName().toString().equals(recieverCountry.getCountryName().toString())){
-                    serviceProvidertmp=serviceProvider;
-                    break;
-                }
-            }
-        }
-        if(serviceProvidertmp==null){
-            throw new Exception("Cannot establish communication");
-        }
-
-
-        Connection connection = new Connection();
-        connection.setUser(sender);
-        connection.setServiceProvider(serviceProvidertmp);
-        sender.setConnected(true);
-        sender.getConnectionList().add(connection);
-        serviceProvidertmp.getConnectionList().add(connection);
-        String tmp = recieverCountry.getCode()+"."+serviceProvidertmp.getId()+"."+sender.getId();
-        sender.setMaskedIp(tmp);
-        User savedUser = userRepository2.save(sender);
-        return sender;
+     try{
+         sender = connect(senderId,recieverCountry.getCountryName().toString());
+         return sender;
+     }
+     catch(Exception e) {
+         throw new Exception("Cannot establish communication");
+     }
     }
 }
