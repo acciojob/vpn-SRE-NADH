@@ -36,21 +36,33 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     List<ServiceProvider> serviceProviders = user.getServiceProviderList();
-    serviceProviders.sort(Comparator.comparingInt(ServiceProvider::getId));
-
-  ServiceProvider serviceProvidertmp=null;
-  Country countrytmp=null;
-    for(ServiceProvider serviceProvider:serviceProviders){
-        List<Country> countries = serviceProvider.getCountryList();
-        for(Country country:countries){
-            if(country.getCountryName().toString().equals(countryName.toUpperCase())){
-                serviceProvidertmp=serviceProvider;
-                countrytmp = country;
-                break;
+        ServiceProvider serviceProvidertmp=null;
+        int lowestId = Integer.MAX_VALUE;
+        Country countrytmp = null;
+        for (ServiceProvider serviceProvider : serviceProviders){
+            List<Country> countryList = serviceProvider.getCountryList();
+            for (Country country1 : countryList){
+                if (countryName.equalsIgnoreCase(country1.getCountryName().toString()) && lowestId>serviceProvider.getId()){
+                    lowestId = serviceProvider.getId();
+                    serviceProvidertmp = serviceProvider;
+                    countrytmp = country1;
+                }
             }
         }
-    }
-     if(serviceProvidertmp==null && countrytmp==null){
+//  ServiceProvider serviceProvidertmp=null;
+//  Country countrytmp=null;
+//    for(ServiceProvider serviceProvider:serviceProviders){
+//        List<Country> countries = serviceProvider.getCountryList();
+//        for(Country country:countries){
+//            if(country.getCountryName().toString().equals(countryName.toUpperCase())){
+//                serviceProvidertmp=serviceProvider;
+//                countrytmp = country;
+//                break;
+//            }
+//        }
+//    }
+
+     if(serviceProvidertmp==null){
          throw new Exception("Unable to connect");
      }
 
