@@ -22,7 +22,7 @@ public class User {
 
     @ManyToMany
     @JoinColumn
-   private List<ServiceProvider> serviceProviderList=new ArrayList<>();
+    private List<ServiceProvider> serviceProviderList=new ArrayList<>();
     @OneToOne
     @JoinColumn
     private Country country;

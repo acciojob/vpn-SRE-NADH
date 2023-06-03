@@ -54,7 +54,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 
      Connection connection = new Connection();
      connection.setUser(user);
+
      user.setConnected(true);
+
      connection.setServiceProvider(serviceProvidertmp);
      user.getConnectionList().add(connection);
      serviceProvidertmp.getConnectionList().add(connection);
@@ -70,6 +72,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         throw new Exception("Already disconnected");
     }
     user.setConnected(false);
+
     Connection connection = user.getConnectionList().get(0);
     ServiceProvider serviceProvider=connection.getServiceProvider();
     serviceProvider.getConnectionList().remove(connection);
@@ -82,7 +85,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     public User communicate(int senderId, int receiverId) throws Exception {
      User sender = userRepository2.findById(senderId).get();
      User receiver = userRepository2.findById(receiverId).get();
-     if(!receiver.getConnected() && sender.getOriginalCountry().getCountryName().equals(receiver.getOriginalCountry().getCountryName())){
+     if((!receiver.getConnected()) && (sender.getOriginalCountry().getCountryName().equals(receiver.getOriginalCountry().getCountryName()))){
          return sender;
      }
      Country recieverCountry=null;
@@ -92,6 +95,7 @@ public class ConnectionServiceImpl implements ConnectionService {
      for(Country country:countryList){
          if(country.getCode().equals(arr[0])){
              recieverCountry=country;
+             break;
          }
      }
      if(recieverCountry.getCountryName().equals(sender.getOriginalCountry().getCountryName())){
@@ -105,7 +109,9 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 
         List<ServiceProvider> serviceProviders = sender.getServiceProviderList();
+
         serviceProviders.sort(Comparator.comparingInt(ServiceProvider->ServiceProvider.getId()));
+
         ServiceProvider serviceProvidertmp=null;
         for(ServiceProvider senderProvider:serviceProviders){
             List<Country> countries = senderProvider.getCountryList();
@@ -124,6 +130,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         Connection connection = new Connection();
         connection.setUser(sender);
         connection.setServiceProvider(serviceProvidertmp);
+        sender.setConnected(true);
         sender.getConnectionList().add(connection);
         serviceProvidertmp.getConnectionList().add(connection);
         String tmp = recieverCountry.getCode()+"."+serviceProvidertmp.getId()+"."+sender.getId();

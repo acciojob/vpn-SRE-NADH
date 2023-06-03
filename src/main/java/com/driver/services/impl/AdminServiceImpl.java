@@ -49,7 +49,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceProvider addCountry(int serviceProviderId, String countryName) throws Exception{
        HashSet<String> hs = converToHs();
-       if(!hs.contains(countryName.toUpperCase())){
+       if((!hs.contains(countryName.toUpperCase()))){
            throw new Exception("Country not found");
        }
        ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
